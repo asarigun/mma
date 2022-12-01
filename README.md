@@ -2,6 +2,9 @@
 
 Implementation of Multi-Masked Aggregators for Graph Neural Networks in Pytorch and PyTorch Geometric. <!--**Preprint will be published soon!**-->
 
+ 	
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/multi-mask-aggregators-for-graph-neural/graph-regression-on-zinc)](https://paperswithcode.com/sota/graph-regression-on-zinc?p=multi-mask-aggregators-for-graph-neural)
+
 > *One of the most critical operations in graph neural networks (GNNs) is the aggregation operation, which aims to extract information from neighbors of the target node. Several convolution methods have been proposed such as standard graph convolution (GCN), graph attention (GAT), and message passing (MPNN). In this study, we propose an aggregation method called Multi-Mask Aggregators (MMA), where the model learns a weighted mask for each aggregator before collecting neighboring messages. MMA draws similarities with the GAT and MPNN but has some theoretical and practical advantages. Intuitively, our framework is not limited by the number of heads from GAT and has more discriminative than an MPNN. The performance of MMA was compared with the well-known baseline methods in both node classification and graph regression tasks on widely-used benchmarking datasets, and it has shown improved performance.*
 
 Check out our paper below for more details
