@@ -1,4 +1,4 @@
-# Multi-Masked Aggregators for GNNs
+# Multi-Mask Aggregators for GNNs
 
 Implementation of Multi-Masked Aggregators for Graph Neural Networks in Pytorch and PyTorch Geometric. <!--**Preprint will be published soon!**-->
 
