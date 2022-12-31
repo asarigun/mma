@@ -30,7 +30,7 @@ In ```graph_regression``` folder, it contains;
 * ```geometric_linear.py```: Multi Mask Layers for each **Aggreation**
 * ```mma_conv.py```: **MultiMaskConv**
 * ```mma.py```: Training scripts for **ZINC** dataset
-* ```scalers.py```: Source code of **Scalers**
+
 ## Requirements
 
 * Python 3.8
