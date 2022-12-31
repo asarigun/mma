@@ -6,7 +6,8 @@ from torch import Tensor
 from torch_scatter import scatter
 from torch.nn import ModuleList, Sequential, ReLU
 from torch_geometric.nn.conv import MessagePassing
-from geometric_linear import *
+from torch_geometric.nn.dense.linear import Linear
+from geometric_linear import MaskAggregateLinear
 from torch_geometric.utils import degree
 import torch.nn.functional as F
 from torch_geometric.nn.inits import reset
