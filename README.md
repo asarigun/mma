@@ -27,7 +27,7 @@ In ```node_classification``` folder, it contains;
 
 
 In ```graph_regression``` folder, it contains;
-* ```geometric_linear.py```: Multi Mask Layers for each **Aggreation**
+* ```mask_aggr.py```: Multi Mask Layers for each **Aggreation**
 * ```mma_conv.py```: **MultiMaskConv**
 * ```mma.py```: Training scripts for **ZINC** dataset
 
