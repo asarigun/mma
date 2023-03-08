@@ -57,7 +57,6 @@ class MMAConv(MessagePassing):
             assert in_channels % towers == 0
         assert out_channels % towers == 0
 
-        #print("edge_dim:", edge_dim)
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.aggregators = aggregators
@@ -81,13 +80,10 @@ class MMAConv(MessagePassing):
         if self.edge_dim is not None:
             self.edge_encoder = Linear(edge_dim, self.F_in)
 
-        # --------------> Masked (Learnable) Aggregation <-------------------- #
-
         self.pre_nns = {}
         for i, aggr in enumerate(aggregators):
             self.pre_nns[aggr] = ModuleList()
         
-        # --------------> General Parameter for GNN <-------------------- #
         self.post_nns = ModuleList()
         for _ in range(towers):
             # --------------> Masked (Learnable) Aggregation <-------------------- #
