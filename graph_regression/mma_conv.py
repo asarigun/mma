@@ -44,10 +44,10 @@ class MMAConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, dropout, in_channels: int, out_channels: int,
+    def __init__(self, in_channels: int, out_channels: int,
                  aggregators: List[str], scalers: List[str], deg: Tensor,
                  edge_dim: Optional[int] = None, towers: int = 1,
-                 pre_layers: int = 1, post_layers: int = 1,
+                 pre_layers: int = 1, post_layers: int = 1, mask: bool = True,
                  divide_input: bool = False, **kwargs):
 
         kwargs.setdefault('aggr', None)
@@ -64,7 +64,8 @@ class MMAConv(MessagePassing):
         self.edge_dim = edge_dim
         self.towers = towers
         self.divide_input = divide_input
-        self.dropout = dropout
+        self.dropout = 0.5
+        self.mask = mask
 
         self.F_in = in_channels // towers if divide_input else in_channels
         self.F_out = self.out_channels // towers
@@ -88,10 +89,10 @@ class MMAConv(MessagePassing):
         for _ in range(towers):
             # --------------> Masked (Learnable) Aggregation <-------------------- #
             for aggr in aggregators:
-                modules = [MaskAggregateLinear((3 if edge_dim else 2) * self.F_in, self.F_in, aggregators, aggr)]
+                modules = [MaskAggregateLinear((3 if edge_dim else 2) * self.F_in, self.F_in, aggregators, aggr, mask=self.mask)]
                 for _ in range(pre_layers - 1):
                     modules += [ReLU()]
-                    modules += [MaskAggregateLinear(self.F_in, self.F_in, aggregators, aggr)]
+                    modules += [MaskAggregateLinear(self.F_in, self.F_in, aggregators, aggr, mask=self.mask)]
                 self.pre_nns[aggr].append(Sequential(*modules))
             # --------------> General Parameter for GNN <-------------------- #
             in_channels = (len(aggregators) * len(scalers) + 1) * self.F_in
@@ -161,7 +162,7 @@ class MMAConv(MessagePassing):
         outs = []
         for aggregator in self.aggregators:
             if aggregator.startswith(('sum', 'mean', 'min', 'max')):
-                reduce_type = aggregator[:3]
+                reduce_type = aggregator[:len(aggregator)]
                 out = scatter(inputs, index, 0, None, dim_size, reduce=reduce_type)
             elif aggregator in ('var', 'std'):
                 mean = scatter(inputs, index, 0, None, dim_size, reduce='mean')

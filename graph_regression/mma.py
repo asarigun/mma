@@ -34,6 +34,7 @@ parser.add_argument('--aggregators', type=str, default="mean,max,min", help='cho
 parser.add_argument('--scalers', type=str, default="identity,amplification,attenuation", help='choose your scalers')
 parser.add_argument('--L', type=int, default=4, help='Enter number of layers')
 parser.add_argument('--cuda', type=str, default="cuda:0", help='choose your cuda device IDs')
+parser.add_argument('--mask', type=bool, default=True, help='decide using mask or not')
 
 # Parse arguments
 args = parser.parse_args()
@@ -89,10 +90,10 @@ class Net(torch.nn.Module):
         
         # Add four convolutional layers with corresponding batch normalization layers
         for _ in range(4): # 4 ------> number of layers
-            conv = MMAConv(dropout=args.dropout, in_channels=75, out_channels=75,
+            conv = MMAConv(in_channels=75, out_channels=75,
                            aggregators=aggregators, scalers=scalers, deg=deg,
                            edge_dim=50, towers=5, pre_layers=1, post_layers=1,
-                           divide_input=False)
+                           mask = args.mask, divide_input=False)
             self.convs.append(conv)
             self.batch_norms.append(BatchNorm(75))
 

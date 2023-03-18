@@ -16,6 +16,7 @@ class MaskAggregateLinear(Linear):
         out_channels: int,
         aggregation_list: List[str],
         aggregation: str,
+        mask: bool = True,
         bias: bool = True,
         weight_initializer: Optional[str] = None,
         bias_initializer: Optional[str] = None
@@ -38,12 +39,16 @@ class MaskAggregateLinear(Linear):
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         
         # Store the aggregation type and its corresponding linear transformation layer
+        self.mask = mask
         self.aggregation = aggregation
         self.aggregation_layers = {}
         for i, aggr in enumerate(aggregation_list):
             aggregation_name = "{}".format(aggr)
-            linear = Linear(in_channels, out_channels, bias, weight_initializer, bias_initializer).to(self.device)
-            self.aggregation_layers[aggregation_name] = linear
+            if self.mask == "no_linear":
+                self.aggregation_layers[aggregation_name] = None
+            else:
+                linear = Linear(in_channels, out_channels, bias, weight_initializer, bias_initializer).to(self.device)
+                self.aggregation_layers[aggregation_name] = linear
 
     def forward(self, input):
         """
@@ -57,4 +62,7 @@ class MaskAggregateLinear(Linear):
         """
         if self.aggregation not in self.aggregation_layers:
             raise ValueError("Invalid aggregation type: {}".format(self.aggregation))
-        return self.aggregation_layers[self.aggregation](input).to(self.device)
+        if self.mask == "no_linear":
+            return input
+        else:
+            return self.aggregation_layers[self.aggregation](input).to(self.device)
