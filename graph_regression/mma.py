@@ -33,7 +33,6 @@ parser.add_argument('--tower', type=int, default=1, help='Number of towers')
 parser.add_argument('--aggregators', type=str, default="mean,max,min", help='choose your aggregators')
 parser.add_argument('--scalers', type=str, default="identity,amplification,attenuation", help='choose your scalers')
 parser.add_argument('--L', type=int, default=4, help='Enter number of layers')
-parser.add_argument('--cuda', type=str, default="cuda:0", help='choose your cuda device IDs')
 parser.add_argument('--mask', type=bool, default=True, help='decide using mask or not')
 
 # Parse arguments
@@ -131,7 +130,7 @@ class Net(torch.nn.Module):
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Initialize neural network, move to GPU if available
-model = Net(args, aggregator_list=args.aggregators.split(","), scaler_list=args.scalers.split(",")).to(args.cuda)
+model = Net(args, aggregator_list=args.aggregators.split(","), scaler_list=args.scalers.split(",")).to(device)
 
 # Initialize optimizer and learning rate scheduler
 optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
@@ -151,7 +150,7 @@ def train(epoch):
 
     total_loss = 0
     for data in train_loader:
-        data = data.to(args.cuda)
+        data = data.to(device)
         optimizer.zero_grad()
         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
         loss = (out.squeeze() - data.y).abs().mean()
@@ -177,7 +176,7 @@ def test(loader):
 
     total_error = 0
     for data in loader:
-        data = data.to(args.cuda)
+        data = data.to(device)
         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
         total_error += (out.squeeze() - data.y).abs().sum().item()
 

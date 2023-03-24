@@ -7,7 +7,7 @@ from torch.nn.modules.module import Module
 import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
-
+from scalers import SCALERS
 
 class GraphConvolution(Module):
 
